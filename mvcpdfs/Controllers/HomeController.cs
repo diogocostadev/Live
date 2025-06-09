@@ -61,10 +61,41 @@ public class HomeController : Controller
                 page.Content()
                     .Column(col =>
                     {
-                        col.Item().Text($"Nome: {model.FullName}");
-                        col.Item().Text($"Valor: R$ {model.Amount:F2}");
+                        col.Item().Text($"Nome do cliente: {model.FullName}");
                         col.Item().Text($"Data: {DateTime.Now:dd/MM/yyyy}");
                         col.Item().Text($"Número: {Guid.NewGuid().ToString()[..8]}");
+
+                        col.Item().PaddingVertical(10).LineHorizontal(1);
+
+                        col.Item().Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.ConstantColumn(40);
+                                columns.RelativeColumn();
+                                columns.ConstantColumn(80);
+                            });
+
+                            table.Header(header =>
+                            {
+                                header.Cell().Element(CellStyle).Text("#");
+                                header.Cell().Element(CellStyle).Text("Descrição");
+                                header.Cell().Element(CellStyle).AlignRight().Text("Valor");
+                            });
+
+                            for (int i = 1; i <= 3; i++)
+                            {
+                                table.Cell().Element(CellStyle).Text(i.ToString());
+                                table.Cell().Element(CellStyle).Text("Item de teste");
+                                table.Cell().Element(CellStyle).AlignRight().Text($"R$ {(model.Amount/3):F2}");
+                            }
+
+                            static IContainer CellStyle(IContainer container) =>
+                                container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(5);
+                        });
+
+                        col.Item().PaddingVertical(10).LineHorizontal(1);
+                        col.Item().AlignRight().Text($"Total: R$ {model.Amount:F2}").Bold();
                     });
 
                 page.Footer()
